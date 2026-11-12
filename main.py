@@ -99,7 +99,7 @@ class GeminiPlugin:
                 "type": "row",
                 "align": "center",
                 "children": [
-                    {"type": "text", "text": "Gemini: Setup Key", "size": "body"},
+                    {"type": "text", "text": "Gemini AI", "size": "body"},
                     {"type": "spacer"},
                     {"type": "button", "id": "btn_tile_setup", "icon": "key"}
                 ]
@@ -156,7 +156,9 @@ class GeminiPlugin:
                 "children": [
                     {"type": "button", "id": "btn_open_ai_studio", "icon": "arrow-square-out", "text": "Get Free Key"},
                     {"type": "spacer"},
-                    {"type": "button", "id": "btn_paste_key", "icon": "clipboard", "text": "Paste Key from Clipboard"}
+                    {"type": "button", "id": "btn_paste_key", "icon": "clipboard", "text": "Paste Key from Clipboard"},
+                    {"type": "spacer"},
+                    {"type": "button", "id": "btn_open_config", "icon": "note-pencil", "text": "Open in Notepad"}
                 ]
             },
             {"type": "spacer"},
@@ -179,7 +181,7 @@ class GeminiPlugin:
                 ]
             },
             {"type": "spacer"},
-            {"type": "text", "text": f"Active Model: {current_model} | Status: {self.status_message}", "size": "caption"}
+            {"type": "text", "text": f"Active Model: {current_model} | Status: {self.status_message}", "size": "small"}
         ]
 
         if has_key:
@@ -234,7 +236,7 @@ class GeminiPlugin:
         # Response or Status Area
         if self.is_busy:
             children.append({"type": "text", "text": "Gemini is thinking...", "size": "body"})
-            children.append({"type": "text", "text": f"Prompt: {self.last_prompt[:90]}...", "size": "caption"})
+            children.append({"type": "text", "text": f"Prompt: {self.last_prompt[:90]}...", "size": "small"})
         elif self.last_response:
             # Action row for response
             children.append({
@@ -255,7 +257,7 @@ class GeminiPlugin:
             children.append({"type": "text", "text": display_text, "size": "body"})
         else:
             children.append({"type": "text", "text": "💡 Tip: Copy text to your clipboard and hit 'Summarize' or 'Fix Grammar' for instant desktop assistance.", "size": "body"})
-            children.append({"type": "text", "text": f"Status: {self.status_message}", "size": "caption"})
+            children.append({"type": "text", "text": f"Status: {self.status_message}", "size": "small"})
 
         return {
             "type": "column",
@@ -346,8 +348,8 @@ class GeminiPlugin:
 
         if event_id == "btn_tile_setup":
             self.current_view = "settings"
-            self.send({"type": "open_page"})
             self.render_page()
+            self.send({"type": "open_page"})
             return
 
         if event_id == "btn_tile_summarize":
@@ -379,6 +381,19 @@ class GeminiPlugin:
         # Page buttons
         if event_id == "btn_back_to_chat":
             self.current_view = "chat"
+            self.render_page()
+            return
+
+        if event_id == "btn_open_config":
+            try:
+                import subprocess
+                os.makedirs(os.path.dirname(self.config_manager.config_path), exist_ok=True)
+                if not os.path.exists(self.config_manager.config_path):
+                    self.config_manager.save()
+                subprocess.Popen(["notepad.exe", self.config_manager.config_path])
+                self.status_message = "Opened config.json in Notepad"
+            except Exception as e:
+                self.status_message = f"Failed to open Notepad: {e}"
             self.render_page()
             return
 
@@ -525,9 +540,14 @@ class GeminiPlugin:
                 self.handle_event(event_id, kind, value)
 
             elif msg_type == "tile_click":
+                self.config_manager.config = self.config_manager.load()
+                self.gemini.set_api_key(self.config_manager.get("api_key", ""))
+                self.render_page()
                 self.send({"type": "open_page"})
 
             elif msg_type == "page_open":
+                self.config_manager.config = self.config_manager.load()
+                self.gemini.set_api_key(self.config_manager.get("api_key", ""))
                 self.render_page()
 
             elif msg_type == "page_close":
