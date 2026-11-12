@@ -4,7 +4,7 @@ import sys
 
 DEFAULT_CONFIG = {
     "api_key": "",
-    "model": "gemini-3.8-flash-lite",
+    "model": "gemini-3.8-flash",
     "auto_copy_responses": True,
     "temperature": 0.7,
 }

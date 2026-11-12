@@ -40,7 +40,7 @@ class GeminiPlugin:
         self.config_manager = ConfigManager()
         self.gemini = GeminiClient(
             api_key=self.config_manager.get("api_key", ""),
-            model=self.config_manager.get("model", "gemini-3.8-flash-lite")
+            model=self.config_manager.get("model", "gemini-3.8-flash")
         )
 
         self.current_view = "chat" if self.config_manager.has_api_key() else "settings"
@@ -144,7 +144,7 @@ class GeminiPlugin:
         has_key = self.config_manager.has_api_key()
         key = self.config_manager.get("api_key", "")
         masked_key = (key[:6] + "..." + key[-4:]) if len(key) > 10 else "No key saved"
-        current_model = self.config_manager.get("model", "gemini-3.8-flash-lite")
+        current_model = self.config_manager.get("model", "gemini-3.8-flash")
 
         children = [
             {"type": "text", "text": "Google Gemini Settings", "size": "title"},
@@ -415,8 +415,8 @@ class GeminiPlugin:
             return
 
         if event_id == "btn_model_flash_15":
-            self.config_manager.set("model", "gemini-3.8-flash-lite")
-            self.gemini.set_model("gemini-3.8-flash-lite")
+            self.config_manager.set("model", "gemini-3.8-flash")
+            self.gemini.set_model("gemini-3.8-flash")
             self.status_message = "Switched to Gemini 1.5 Flash"
             self.render_page()
             return
