@@ -6,16 +6,16 @@ import ssl
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 
 class GeminiClient:
-    def __init__(self, api_key="", model="gemini-3.8-flash"):
+    def __init__(self, api_key="", model="gemini-3.1-flash-lite"):
         self.api_key = api_key.strip()
-        self.model = model.strip() or "gemini-3.8-flash"
+        self.model = model.strip() or "gemini-3.1-flash-lite"
         self._ctx = ssl.create_default_context()
 
     def set_api_key(self, api_key):
         self.api_key = api_key.strip()
 
     def set_model(self, model):
-        self.model = model.strip() or "gemini-3.8-flash"
+        self.model = model.strip() or "gemini-3.1-flash-lite"
 
     def generate(self, prompt, system_instruction=None, temperature=0.7, max_tokens=1024):
         if not self.api_key:
