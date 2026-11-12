@@ -1,0 +1,6 @@
+id = "gemini-assistant"
+name = "Gemini AI"
+icon = "sparkle"
+size = "wide"
+run = ["python", "main.py"]
+description = "Your personal Gemini AI desktop assistant in the Fenn notch. Bring your own API key for instant summarization, grammar fixing, quick questions, and daily PC productivity shortcuts."
